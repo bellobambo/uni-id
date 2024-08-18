@@ -19,7 +19,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: "dark",
+      }}
+      frontendApi={process.env.NEXT_PUBLIC_CLERK_FRONTEND_API}
+    >
       <html data-theme="night" lang="en">
         <body>
           <User />

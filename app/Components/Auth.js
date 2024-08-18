@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import React, { useEffect } from "react";
 
-function CurrentUser() {
+function AuthUser() {
   const { user } = useUser();
 
   useEffect(() => {
@@ -17,4 +17,4 @@ function CurrentUser() {
   return <div>Welcome, {user.firstName}!</div>;
 }
 
-export default CurrentUser;
+export default AuthUser;

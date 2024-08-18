@@ -6,7 +6,7 @@ const SignIn = () => {
   return (
     <div>
       <SignedOut>
-        <SignInButton>
+        <SignInButton forceRedirectUrl="/dashboard">
           <div className="text-center flex justify-center flex-col items-center mt-[100px] mx-auto  space-y-4">
             <span
               className="rounded-md hover:bg-[#FAD572] hover:text-[#061867] border w-fit cursor-pointer px-3 p-2"
