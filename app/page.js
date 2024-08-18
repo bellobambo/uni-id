@@ -1,20 +1,14 @@
-"use client";
+import { currentUser } from "@clerk/nextjs/server";
 
-import { useUser } from "@clerk/nextjs";
-import React, { useEffect } from "react";
+export default async function Home() {
+  const user = await currentUser();
+  const email = user.emailAddresses[0].emailAddress;
+  console.log(email, "email address");
 
-function CurrentUser() {
-  const { user } = useUser();
-
-  useEffect(() => {
-    console.log(user, "current user");
-  }, [user]);
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  return <div>Welcome, {user.firstName}!</div>;
+  return (
+    <main>
+      hello {email}
+      <div></div>
+    </main>
+  );
 }
-
-export default CurrentUser;
