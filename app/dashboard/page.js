@@ -60,7 +60,7 @@ const page = () => {
             </motion.div>
             <motion.div animate={controls}>
               <label className="block text-[#061867] font-semibold mb-2">
-                Hostel
+                Name
               </label>
               <input
                 type="text"
@@ -86,32 +86,6 @@ const page = () => {
             <motion.div animate={controls}>
               <label className="block text-[#061867] font-semibold mb-2">
                 Signature
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border border-[#061867] bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#061867] focus:border-transparent text-black "
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              />
-            </motion.div>
-          </div>
-
-          <div className="flex items-center  gap-6">
-            <motion.div animate={controls}>
-              <label className="block text-[#061867] font-semibold mb-2">
-                Certificate
-              </label>
-              <input
-                placeholder="O'level , A'level or OND"
-                type="text"
-                className="w-full px-4 py-2 border border-[#061867] bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#061867] focus:border-transparent text-black "
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              />
-            </motion.div>
-            <motion.div animate={controls}>
-              <label className="block text-[#061867] font-semibold mb-2">
-                Phone Number
               </label>
               <input
                 type="text"
