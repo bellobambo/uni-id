@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
     >
       <html data-theme="night" lang="en">
         <body>
-          <User />
+          {/* <User /> */}
           <SignIn />
           <SignedIn>{children}</SignedIn>
         </body>

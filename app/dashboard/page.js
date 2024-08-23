@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
+import User from "../Components/User";
 
 const page = () => {
   const controls = useAnimation();
@@ -19,6 +20,7 @@ const page = () => {
 
   return (
     <div className="min-h-screen flex mt-[100px] items-center  flex-col">
+      {/* <User /> */}
       <motion.i
         className="block text-center text-lg text-[#FAD572] mb-6"
         initial={{ opacity: 0, y: -20 }}
