@@ -11,7 +11,8 @@ const databases = new Databases(client);
 
 export async function POST(request) {
   try {
-    const { Matric_Number, Full_Name, NIN, Passport } = await request.json();
+    const { Matric_Number, Full_Name, NIN, Passport, Phone } =
+      await request.json();
 
     const response = await databases.createDocument(
       "66cdcc8e0013cb4db348", // Database ID
@@ -22,6 +23,7 @@ export async function POST(request) {
         Full_Name,
         NIN,
         Passport,
+        Phone,
       }
     );
 

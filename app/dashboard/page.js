@@ -11,10 +11,11 @@ const Page = () => {
   const controls = useAnimation();
   const [isTyping, setIsTyping] = useState(false);
   const [formData, setFormData] = useState({
-    Matric_Number: "",
-    Full_Name: "",
+    Matric_Number: "BCH/2035/097",
+    Full_Name: "Bello Bambo",
     NIN: "",
     Passport: "",
+    Phone: "",
   });
   const [loading, setLoading] = useState(false); // Added loading state
   const router = useRouter();
@@ -38,7 +39,7 @@ const Page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when form submission starts
+    setLoading(true);
     try {
       const response = await fetch("/api/create", {
         method: "POST",
@@ -54,7 +55,7 @@ const Page = () => {
       if (response.ok) {
         toast.success("Submission successful!");
         setTimeout(() => {
-          router.push("/card"); // Redirect to /card page
+          router.push("/card");
         }, 1000);
       } else {
         toast.error("Submission failed.");
@@ -103,7 +104,7 @@ const Page = () => {
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={formData.Matric_Number || "BCH/2019/097"}
+                  value={formData.Matric_Number}
                 />
               </motion.div>
               <motion.div animate={controls}>
@@ -117,7 +118,24 @@ const Page = () => {
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={formData.Full_Name || "Bello Bambo"}
+                  value={formData.Full_Name}
+                />
+              </motion.div>
+            </div>
+            <div>
+              <motion.div animate={controls}>
+                <label className="block text-[#061867] font-semibold mb-2">
+                  Phone
+                </label>
+                <input
+                  type="text"
+                  name="Phone"
+                  className="w-full px-4 py-2 border border-[#061867] bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#061867] focus:border-transparent text-black"
+                  placeholder="Enter Phone Number"
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={formData.Phone}
                 />
               </motion.div>
             </div>
@@ -130,6 +148,7 @@ const Page = () => {
                   type="text"
                   name="NIN"
                   className="w-full px-4 py-2 border border-[#061867] bg-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#061867] focus:border-transparent text-black"
+                  placeholder="Enter NIN Number"
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   onChange={handleChange}
