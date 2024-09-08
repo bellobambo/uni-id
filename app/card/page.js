@@ -6,6 +6,10 @@ import ReactCardFlip from "react-card-flip";
 import User from "../Components/User";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { PaystackButton } from "react-paystack";
+import toast, { Toaster } from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const IdCard = () => {
   const [data, setData] = useState([]);
@@ -13,7 +17,95 @@ const IdCard = () => {
   const [error, setError] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const reportRef = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, isLoaded } = useUser();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
+  console.log(user, "user");
+
+  const [formData, setFormData] = useState({
+    accountNumber: "",
+    amount: "",
+    description: "",
+    bank: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // If bank is selected, set receiver's name to Bello Bambo Ayodeji
+    if (name === "bank") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+        recivername: "Bello Bambo Ayodeji",
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const banks = [
+    "Access Bank",
+    "Zenith Bank",
+    "Guaranty Trust Bank (GTBank)",
+    "First Bank of Nigeria",
+    "United Bank for Africa (UBA)",
+    "Fidelity Bank",
+    "Union Bank",
+    "Ecobank",
+    "Stanbic IBTC Bank",
+    "Sterling Bank",
+    "Polaris Bank",
+    "Wema Bank",
+    "Heritage Bank",
+    "Keystone Bank",
+    "Opay",
+    "Palmpay",
+    "Moniepoint",
+  ];
+
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: isLoaded && user ? user.emailAddresses[0].emailAddress : "", // Check if user and isLoaded are valid
+    amount: formData.amount * 100,
+    publicKey: "pk_test_551a9d732dd912b7a8c17b3096c1e11d61a1ac11",
+  };
+
+  const handlePaystackSuccessAction = (reference) => {
+    console.log(reference);
+
+    toast.success("Transfer Successful");
+    router.push("/card");
+  };
+
+  const handlePaystackCloseAction = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("closed");
+  };
+
+  const componentProps = {
+    ...config,
+    text: "Pay Now",
+    onSuccess: (reference) => handlePaystackSuccessAction(reference),
+    onClose: handlePaystackCloseAction,
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      alert("Please authenticate using your fingerprint first.");
+    } else {
+      console.log("Form submitted with:", formData);
+    }
+  };
   useEffect(() => {
     // Function to fetch data
     const fetchData = async () => {
@@ -123,9 +215,46 @@ const IdCard = () => {
     };
   };
 
+  const handleFingerprintAuth = async () => {
+    try {
+      const publicKey = {
+        challenge: new Uint8Array([
+          0x8c, 0x99, 0x91, 0xca, 0xa4, 0x59, 0x91, 0xc7,
+        ]).buffer,
+        rp: {
+          name: "Your Payment App",
+        },
+        user: {
+          id: new Uint8Array([1, 2, 3, 4]),
+          name: user.emailAddresses[0].emailAddress,
+          displayName: user.fullName,
+        },
+        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        timeout: 60000,
+        authenticatorSelection: {
+          userVerification: "required",
+        },
+      };
+
+      const credential = await navigator.credentials.create({
+        publicKey,
+      });
+
+      if (credential) {
+        setIsAuthenticated(true);
+        alert("Authentication successful!");
+      }
+    } catch (error) {
+      console.error("Authentication failed", error);
+      alert("Fingerprint authentication failed. Please try again.");
+    }
+  };
+
   return (
     <div className="bg-[#1933a7] h-screen">
       <User />
+      <Toaster />
+
       <div className="flex flex-col justify-center items-center mt-[250px] ">
         <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
           {/* Front of the card */}
@@ -178,20 +307,149 @@ const IdCard = () => {
         </ReactCardFlip>
 
         {/* Flip Button */}
+        <div className="flex justify-between items-center gap-4">
+          <button
+            className="mt-4 px-4 py-2 bg-[#FAD572] text-[#061867] rounded-md shadow-lg font-bold"
+            onClick={handleFlip}
+          >
+            Flip Card
+          </button>
+
+          <button
+            className="bg-[#061867] text-white w-full md:w-auto h-[48px] mt-4 px-3 rounded"
+            onClick={downloadPDF}
+          >
+            Save QRCode
+          </button>
+        </div>
         <button
           className="mt-4 px-4 py-2 bg-[#FAD572] text-[#061867] rounded-md shadow-lg font-bold"
-          onClick={handleFlip}
+          onClick={toggleModal}
         >
-          Flip Card
+          Pay
         </button>
 
-        <button
-          className="bg-[#061867] text-white w-full md:w-auto h-[48px] mt-4 px-3 rounded"
-          onClick={downloadPDF}
-        >
-          Save QRCode
-        </button>
-        <small>
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-[#DEDEDE] rounded-lg shadow-lg w-96 p-6">
+              <h2 className="text-2xl text-black font-bold mb-4 text-center">
+                Make a Payment
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Receiver Account Number */}
+                <div>
+                  <label className="block font-bold text-black">
+                    Receiver Account Number
+                  </label>
+                  <input
+                    type="text"
+                    name="accountNumber"
+                    value={formData.accountNumber}
+                    onChange={handleChange}
+                    className="w-full border px-3 py-2 rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-between items-center gap-4">
+                  <div>
+                    <label className="block font-bold text-black">
+                      Bank Name
+                    </label>
+                    <select
+                      name="bank"
+                      value={formData.bank}
+                      onChange={handleChange}
+                      className="w-full border px-3 py-2 rounded-md"
+                      required
+                    >
+                      <option value="" disabled>
+                        Select Bank
+                      </option>
+                      {banks.map((bank, index) => (
+                        <option key={index} value={bank}>
+                          {bank}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Amount */}
+                  <div>
+                    <label className="block font-bold text-black">Amount</label>
+                    <input
+                      type="number"
+                      name="amount"
+                      value={formData.amount}
+                      onChange={handleChange}
+                      className="w-full border px-3 py-2 rounded-md"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-black">
+                    Receiver Name
+                  </label>
+                  <input
+                    type="text"
+                    name="recivername"
+                    value={formData.recivername}
+                    onChange={handleChange}
+                    className="w-full border px-3 py-2 rounded-md"
+                    required
+                    readOnly
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-black">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="w-full border px-3 py-2 rounded-md"
+                    required
+                  />
+                </div>
+
+                {/* Modal Actions */}
+
+                <div className="flex justify-end gap-4 items-center">
+                  <div className="flex justify-between mt-4">
+                    <button
+                      type="button"
+                      className="px-4 py-2 text-white rounded-md bg-gray-400"
+                      onClick={toggleModal}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  <div className="mt-4 items-center">
+                    {!isAuthenticated ? (
+                      <button
+                        type="button"
+                        className="px-4 py-2 text-white rounded-md bg-[#1933a7]"
+                        onClick={handleFingerprintAuth}
+                      >
+                        Confirm
+                      </button>
+                    ) : (
+                      <div className="  bg-[#1933a7] p-3 text-black">
+                        <PaystackButton {...componentProps} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        <small className="my-4">
           <i>
             The QRcode will be used to confirm your identity in the schools ICT
             Center
