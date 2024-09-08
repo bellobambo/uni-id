@@ -408,7 +408,7 @@ const IdCard = () => {
                   </div>
 
                   <div className="mt-4 items-center">
-                    {!isAuthenticated ? (
+                    {!isAuthenticated && (
                       <button
                         type="button"
                         className="px-4 py-2 text-white rounded-md bg-[#1933a7]"
@@ -416,10 +416,6 @@ const IdCard = () => {
                       >
                         Pay
                       </button>
-                    ) : (
-                      <div className=" rounded-md  bg-[#1933a7] p-3 text-white">
-                        HELLO
-                      </div>
                     )}
                   </div>
                 </div>
