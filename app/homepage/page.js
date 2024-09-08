@@ -1,13 +1,28 @@
-import React from "react";
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
+
+import React, { useEffect, useState, useRef } from "react";
+
+import { useUser } from "@clerk/nextjs";
+
 import { SignOutButton } from "@clerk/nextjs";
 
 const Page = async () => {
-  const user = await currentUser();
-  const email = user.emailAddresses[0].emailAddress;
-  const Name = user.fullName;
-  const img = user.imageUrl;
-  console.log(Name, "email address");
+  const { user, isLoaded } = useUser();
+  const [userData, setUserData] = useState({ name: "", email: "", img: "" });
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      const email = user.emailAddresses[0].emailAddress;
+      const name = user.fullName;
+      const img = user.imageUrl;
+
+      setUserData({ name, email, img });
+      console.log(name, "email address");
+    }
+  }, [isLoaded, user]);
+
+  if (!isLoaded) return <div>Loading...</div>;
+
   return (
     <div>
       <div className="bg-[#AAB6C4] w-full text-[#0A2081]">
@@ -41,7 +56,7 @@ const Page = async () => {
 
         <div className="flex gap-2 items-center mt-2 md:mt-0">
           <h1 className="text-[#F8CB4F] text-[16px] md:text-[20px]">Welcome</h1>
-          <h1 className="text-[16px] md:text-[20px]">{Name}</h1>
+          <h1 className="text-[16px] md:text-[20px]">{userData.name}</h1>
           <SignOutButton />
         </div>
       </div>
@@ -130,7 +145,7 @@ const Page = async () => {
                 Profile Page : <b>BCH/2019/097</b>
               </h5>
               <h5 className="text-[15px] text-[#336699]">
-                Name : <b>{Name}</b>
+                Name : <b>{userData.name}</b>
               </h5>
               <h5 className="text-[15px] text-[#336699]">
                 Current Part : <b>1</b>
@@ -148,7 +163,7 @@ const Page = async () => {
                 BedSpace Location: <b>NIL</b>
               </h5>
               <h5 className="text-[15px] text-[#336699]">
-                Email Address: : <b>{email}</b>
+                Email Address: : <b>{userData.email}</b>
               </h5>
               <h5 className="text-[15px] text-[#336699] whitespace-nowrap">
                 Email Password:{" "}
@@ -159,7 +174,7 @@ const Page = async () => {
               </h5>
             </div>
             <div className="items-start pr-0 md:pr-[100px]">
-              <img src={img} className="max-w-full" />
+              <img src={userData.img} className="max-w-full" />
             </div>
           </div>
         </div>

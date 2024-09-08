@@ -6,7 +6,7 @@ import ReactCardFlip from "react-card-flip";
 import User from "../Components/User";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { PaystackButton } from "react-paystack";
+
 import toast, { Toaster } from "react-hot-toast";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -71,33 +71,6 @@ const IdCard = () => {
     "Palmpay",
     "Moniepoint",
   ];
-
-  const config = {
-    reference: new Date().getTime().toString(),
-    email: isLoaded && user ? user.emailAddresses[0].emailAddress : "", // Check if user and isLoaded are valid
-    amount: formData.amount * 100,
-    publicKey: "pk_test_551a9d732dd912b7a8c17b3096c1e11d61a1ac11",
-  };
-
-  const handlePaystackSuccessAction = (reference) => {
-    console.log(reference);
-
-    toast.success("Transfer Successful");
-    setIsOpen(false);
-    router.push("/card");
-  };
-
-  const handlePaystackCloseAction = () => {
-    // implementation for  whatever you want to do when the Paystack dialog closed.
-    console.log("closed");
-  };
-
-  const componentProps = {
-    ...config,
-    text: "Pay Now",
-    onSuccess: (reference) => handlePaystackSuccessAction(reference),
-    onClose: handlePaystackCloseAction,
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -243,7 +216,8 @@ const IdCard = () => {
 
       if (credential) {
         setIsAuthenticated(true);
-        alert("Authentication successful!");
+        toast.success("Transaction successful!");
+        setIsOpen(false);
       }
     } catch (error) {
       console.error("Authentication failed", error);
@@ -440,11 +414,11 @@ const IdCard = () => {
                         className="px-4 py-2 text-white rounded-md bg-[#1933a7]"
                         onClick={handleFingerprintAuth}
                       >
-                        Confirm
+                        Pay
                       </button>
                     ) : (
                       <div className=" rounded-md  bg-[#1933a7] p-3 text-white">
-                        <PaystackButton {...componentProps} />
+                        HELLO
                       </div>
                     )}
                   </div>
