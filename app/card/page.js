@@ -83,6 +83,7 @@ const IdCard = () => {
     console.log(reference);
 
     toast.success("Transfer Successful");
+    setIsOpen(false);
     router.push("/card");
   };
 
@@ -296,7 +297,10 @@ const IdCard = () => {
                 className="w-20 h-20 bg-white p-1 rounded flex items-center justify-center"
                 ref={reportRef}
               >
-                <QRCode value={lastItem.$id} size={64} />
+                <QRCode
+                  value={` Card Id : ${lastItem.$id} , Matric Number : ${lastItem.Matric_Number}`}
+                  size={64}
+                />
               </div>
             </div>
             <p className="mt-5">Valid till : 20/09/25</p>
@@ -439,7 +443,7 @@ const IdCard = () => {
                         Confirm
                       </button>
                     ) : (
-                      <div className="  bg-[#1933a7] p-3 text-black">
+                      <div className=" rounded-md  bg-[#1933a7] p-3 text-white">
                         <PaystackButton {...componentProps} />
                       </div>
                     )}
